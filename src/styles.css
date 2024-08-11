@@ -1,0 +1,73 @@
+.App {
+  font-family: sans-serif;
+  text-align: center;
+  height: 100vh;
+  background-color: #222;
+}
+
+.inputField {
+  padding: 10px;
+  width: 50vw;
+  border-radius: 20px;
+
+  /* border: 2px solid #0b0720; */
+  /* background-color: #333; */
+  margin-top: 15px;
+}
+
+.table-row-dark {
+  background-color: #333;
+  color: white;
+}
+
+.table-row-light {
+  background-color: #444;
+  color: white;
+}
+
+.ant-table {
+  border: 1px solid black !important;
+  background-color: #222;
+  color: white;
+}
+
+.ant-table-thead > tr > th {
+  background-color: #222;
+  color: #ccc;
+}
+
+.ant-table-tbody > tr > td {
+  border: none;
+}
+.ant-table-tbody > tr:hover > td {
+  background-color: #555 !important;
+  color: white;
+}
+
+.ant-table-tbody > tr > td {
+  background-color: #333 !important;
+  color: white;
+}
+
+.ant-checkbox-checked .ant-checkbox-inner {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+.ant-table-thead > tr > th {
+  background-color: #222 !important;
+  color: white !important;
+}
+/* .ant-select-item-empty {
+  background-color: #222 !important;
+  color: white !important;
+}
+.ant-select-item {
+  background-color: #222 !important;
+  color: white !important;
+} */
+.ant-select-selector {
+  margin-left: 20vw;
+  margin-right: 20vw;
+  text-align: left;
+  /* border-radius: 10px !important; */
+}
