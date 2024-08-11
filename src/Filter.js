@@ -15,24 +15,34 @@ const SearchFilterComponent = ({ data }) => {
   const [myOption, setMyOptions] = useState([]);
 
   const handleSelect = (value) => {
-    const [companyName, description] = value.split("||");
+    // console.log(value, "++++");
+    const [companyName, description, lastChecked] = value.split("||");
 
-    const selectedItem = data.find(
+    const ListItems = data
+      .filter((item) => item.companyName === companyName)
+      .map((filtereditems) => {
+        return {
+          ...filtereditems,
+        };
+      });
+    const selectedItem = ListItems.find(
       (item) =>
         item &&
         item.companyName === companyName &&
         item.description === description
     );
-
-    if (
-      selectedItem &&
-      !selectedFilters.some((item) => item && item.companyName === companyName)
-    ) {
-      setSelectedFilters([...selectedFilters, selectedItem]);
-      setFilteredItems([]);
-      setSearchInput([]);
-      setMyOptions([]);
-    }
+    // console.log(selectedItem);
+    // if (
+    //   selectedItem &&
+    //   !selectedFilters.some((item) => item && item.companyName === companyName)
+    // ) {
+    setSelectedFilters([...selectedFilters, ...ListItems]);
+    // console.log(selectedItem);
+    setFilteredItems([]);
+    setSearchInput([]);
+    // setIsInputChange(true);
+    // setMyOptions([]);
+    // }
   };
 
   const handleDeselect = (value) => {
@@ -41,12 +51,15 @@ const SearchFilterComponent = ({ data }) => {
       selectedFilters.filter((item) => item.companyName !== companyName)
     );
     // setSearchInput([]);
+    // setSelectedFilters([]);
     setMyOptions([]);
     setSearchInput([]);
   };
 
   const handleDateChange = (date, dateString) => {
     handleSearchChange(dateString);
+    // setIsInputChange(true);
+    // setMyOptions([]);
   };
 
   const handleInputChange = (value) => {
@@ -71,30 +84,36 @@ const SearchFilterComponent = ({ data }) => {
     setSearchInput(Input);
 
     const formatDate = ConvertToOriginalFormat(Input);
-
-    const ListItems = data.filter((item) => {
-      const lowerInput = Input.toLowerCase();
-      const ItemNameDesc =
-        item.companyName.toLowerCase() + "~" + item.description.toLowerCase();
-      console.log(ItemNameDesc.includes(lowerInput));
-
-      return (
-        item.lastChecked === formatDate ||
-        item.companyName.toLowerCase().includes(lowerInput) ||
-        item.description.toLowerCase().startsWith(lowerInput) ||
-        ItemNameDesc.includes(lowerInput)
-      );
-    });
-
-    if (Input === "") {
-      setFilteredItems([]);
+    const uniqueItems = Array.from(
+      new Map(data.map((item) => [item.companyName, item])).values()
+    );
+    if (!isDateMode) {
+      const ListItems = uniqueItems.filter((item) => {
+        const lowerInput = Input.toLowerCase();
+        const ItemNameDesc =
+          item.companyName.toLowerCase() + "~" + item.description.toLowerCase();
+        return (
+          item.companyName.toLowerCase().includes(lowerInput) ||
+          item.description.toLowerCase().startsWith(lowerInput) ||
+          ItemNameDesc.includes(lowerInput)
+        );
+      });
+      if (Input === "") {
+        setFilteredItems([]);
+        setMyOptions([]);
+        setSelectedFilters([]);
+      } else {
+        setFilteredItems(ListItems);
+      }
     } else {
-      console.log(ListItems);
-      setFilteredItems(ListItems);
-    }
-    setMyOptions(ListItems);
-  };
+      const ListsItems = data.filter((item) => {
+        return item.lastChecked === formatDate;
+      });
 
+      setMyOptions(ListsItems);
+    }
+  };
+  console.log(myOption);
   return (
     <div>
       <div></div>
@@ -107,9 +126,13 @@ const SearchFilterComponent = ({ data }) => {
           value={
             isDateMode
               ? searchInput
-              : selectedFilters
-                  .filter((item) => item && item.companyName) // Safeguard against undefined
-                  .map((item) => `${item.companyName}`)
+              : Array.from(
+                  new Set(
+                    selectedFilters
+                      .filter((item) => item && item.companyName) // Safeguard against undefined
+                      .map((item) => `${item.companyName}`)
+                  )
+                )
           }
           onSelect={handleSelect}
           onDeselect={handleDeselect}
@@ -133,7 +156,7 @@ const SearchFilterComponent = ({ data }) => {
             !isDateMode
               ? filteredItems.map((item) => ({
                   label: `${item.companyName} (${item.description})`,
-                  value: `${item.companyName}||${item.description}`,
+                  value: `${item.companyName}||${item.description}||${item.lastChecked}`,
                 }))
               : myOption
           }
